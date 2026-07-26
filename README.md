@@ -73,3 +73,7 @@ Consultez la [documentation.md](documentation.md) pour obtenir les détails comp
 ## 📝 Références & Dataset
 - **Jeu de données** : [Kaggle GTSRB German Traffic Sign Dataset](https://www.kaggle.com/meowmeowmeowmeowmeow/gtsrb-german-traffic-sign)
 - **Licence** : MIT
+=======
+# Traffic_Sign
+TrafficSign AI – Reconnaissance intelligente des panneaux routiers .
+
