@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TrafficSign AI - Détection et Classification</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #ff4757;
+            --primary-glow: rgba(255, 71, 87, 0.4);
+            --secondary: #2f3542;
+            --background: #0f111a;
+            --card-bg: rgba(30, 33, 49, 0.65);
+            --text-main: #f1f2f6;
+            --text-muted: #a4b0be;
+            --accent: #2ed573;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: radial-gradient(circle at 50% 0%, #1e2235 0%, var(--background) 70%);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            overflow-x: hidden;
+            padding: 2rem 1rem;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 2.5rem;
+            animation: fadeInDown 0.8s ease-out;
+        }
+
+        h1 {
+            font-size: 2.8rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #ffffff 0%, var(--text-muted) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -0.5px;
+            margin-bottom: 0.5rem;
+        }
+
+        header p {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            font-weight: 300;
+        }
+
+        .container {
+            display: flex;
+            gap: 2rem;
+            max-width: 1200px;
+            width: 100%;
+            justify-content: center;
+            flex-wrap: wrap;
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        .card {
+            background: var(--card-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 24px;
+            padding: 2rem;
+            flex: 1;
+            min-width: 320px;
+            max-width: 550px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), #ffa502);
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5), 0 0 20px rgba(255, 255, 255, 0.02);
+        }
+
+        .card-title {
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .card-title .dot {
+            width: 8px;
+            height: 8px;
+            background-color: var(--primary);
+            border-radius: 50%;
+            display: inline-block;
+            box-shadow: 0 0 8px var(--primary);
+        }
+
+        .card-title .dot.green {
+            background-color: var(--accent);
+            box-shadow: 0 0 8px var(--accent);
+        }
+
+        .media-container {
+            width: 100%;
+            aspect-ratio: 4/3;
+            background-color: rgba(0, 0, 0, 0.2);
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .media-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Upload styling */
+        .upload-area {
+            border: 2px dashed rgba(255, 255, 255, 0.15);
+            border-radius: 16px;
+            padding: 3rem 1.5rem;
+            text-align: center;
+            cursor: pointer;
+            transition: border-color 0.3s ease, background-color 0.3s ease;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+        }
+
+        .upload-area:hover {
+            border-color: var(--primary);
+            background-color: rgba(255, 71, 87, 0.03);
+        }
+
+        .upload-icon {
+            font-size: 3rem;
+            color: var(--text-muted);
+            transition: color 0.3s ease;
+        }
+
+        .upload-area:hover .upload-icon {
+            color: var(--primary);
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, var(--primary) 0%, #ff6b81 100%);
+            color: #ffffff;
+            border: none;
+            padding: 0.8rem 1.8rem;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            box-shadow: 0 4px 15px var(--primary-glow);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px var(--primary-glow);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        /* Result Section */
+        .result-panel {
+            margin-top: 1.5rem;
+            padding: 1.2rem;
+            background-color: rgba(0, 0, 0, 0.15);
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            display: none;
+            animation: fadeIn 0.4s ease-out;
+        }
+
+        .result-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.8rem;
+            font-size: 0.95rem;
+        }
+
+        .result-row:last-child {
+            margin-bottom: 0;
+        }
+
+        .result-label {
+            color: var(--text-muted);
+        }
+
+        .result-value {
+            font-weight: 600;
+        }
+
+        .result-value.highlight {
+            color: var(--primary);
+        }
+
+        .probability-bar-bg {
+            width: 100%;
+            height: 6px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+            margin-top: 0.4rem;
+            overflow: hidden;
+        }
+
+        .probability-bar-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            border-radius: 3px;
+            transition: width 0.6s cubic-bezier(0.1, 0.8, 0.3, 1);
+        }
+
+        /* Animations */
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        footer {
+            margin-top: auto;
+            padding-top: 3rem;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            font-weight: 300;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>TrafficSign AI</h1>
+        <p>Détection & Classification des Panneaux de Signalisation Allemands (GTSRB)</p>
+    </header>
+
+    <div class="container">
+        <!-- Live Webcam Card -->
+        <div class="card">
+            <div class="card-title">
+                <span class="dot"></span>
+                Flux Vidéo en Direct
+            </div>
+            <div class="media-container">
+                <img src="/video_feed" alt="Flux Vidéo Local" onerror="this.style.display='none'; document.getElementById('webcam-fallback').style.display='flex';">
+                <div id="webcam-fallback" style="display:none; flex-direction:column; align-items:center; gap:10px; color:var(--text-muted);">
+                    <svg style="width:48px;height:48px" viewBox="0 0 24 24"><path fill="currentColor" d="M3.27,1.44L2,2.72L5.28,6H4A2,2 0 0,0 2,8V18A2,2 0 0,0 4,20H20C20.25,20 20.47,19.95 20.69,19.87L21.28,20.46L22.56,19.18L3.27,1.44M4,8H7.28L9.28,10H4V8M4,12H11.28L13.28,14H4V12M4,16H15.28L17.28,18H4V16M18,10H16.8L15.3,8.5L16,8H20V10M20,12V14.5L18.5,13L20,12M20,16V18H19.8L17.8,16H20M17,10.5L14,7.5L16,5.5L19,8.5L17,10.5Z" /></svg>
+                    <span>Flux Webcam inactif</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Static Upload Card -->
+        <div class="card">
+            <div class="card-title">
+                <span class="dot green"></span>
+                Analyser une Image
+            </div>
+            <div class="upload-area" id="drop-zone" onclick="document.getElementById('file-input').click()">
+                <div class="upload-icon">
+                    <svg style="width:54px;height:54px" viewBox="0 0 24 24"><path fill="currentColor" d="M19.35,10.04C18.67,6.59 15.64,4 12,4C9.11,4 6.6,5.64 5.35,8.04C2.34,8.36 0,10.91 0,14A6,6 0 0,0 6,20H19A5,5 0 0,0 24,15C24,12.36 21.95,10.22 19.35,10.04M14,13V17H10V13H7L12,8L17,13H14Z" /></svg>
+                </div>
+                <div>
+                    <p style="font-weight:600; margin-bottom:0.25rem;">Glissez-déposez une image ici</p>
+                    <p style="font-size:0.85rem; color:var(--text-muted)">ou cliquez pour explorer vos fichiers</p>
+                </div>
+                <input type="file" id="file-input" class="file-input" accept="image/*" onchange="uploadImage(this.files[0])">
+            </div>
+
+            <div class="result-panel" id="result-panel">
+                <div class="result-row">
+                    <span class="result-label">Classe Prédite</span>
+                    <span class="result-value highlight" id="res-class">Non détecté</span>
+                </div>
+                <div class="result-row">
+                    <span class="result-label">Confiance</span>
+                    <span class="result-value" id="res-prob">0.0%</span>
+                </div>
+                <div class="probability-bar-bg">
+                    <div class="probability-bar-fill" id="res-bar"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2026 TrafficSign AI Team</p>
+    </footer>
+
+    <script>
+        const dropZone = document.getElementById('drop-zone');
+        
+        ['dragenter', 'dragover'].forEach(eventName => {
+            dropZone.addEventListener(eventName, highlight, false);
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, unhighlight, false);
+        });
+
+        function highlight(e) {
+            e.preventDefault();
+            dropZone.style.borderColor = 'var(--primary)';
+            dropZone.style.backgroundColor = 'rgba(255, 71, 87, 0.05)';
+        }
+
+        function unhighlight(e) {
+            e.preventDefault();
+            dropZone.style.borderColor = 'rgba(255, 255, 255, 0.15)';
+            dropZone.style.backgroundColor = 'transparent';
+        }
+
+        dropZone.addEventListener('drop', e => {
+            e.preventDefault();
+            const dt = e.dataTransfer;
+            const files = dt.files;
+            if(files.length > 0) {
+                uploadImage(files[0]);
+            }
+        });
+
+        function uploadImage(file) {
+            if (!file) return;
+
+            const formData = new FormData();
+            formData.append('file', file);
+
+            const resultPanel = document.getElementById('result-panel');
+            const resClass = document.getElementById('res-class');
+            const resProb = document.getElementById('res-prob');
+            const resBar = document.getElementById('res-bar');
+
+            // Afficher le loader/panel
+            resultPanel.style.display = 'block';
+            resClass.innerText = 'Analyse en cours...';
+            resProb.innerText = '--';
+            resBar.style.width = '0%';
+
+            fetch('/predict', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    resClass.innerText = data.class_name;
+                    const pct = (data.probability * 100).toFixed(1);
+                    resProb.innerText = pct + '%';
+                    resBar.style.width = pct + '%';
+                } else {
+                    resClass.innerText = 'Erreur lors de la classification';
+                    resProb.innerText = '0%';
+                    resBar.style.width = '0%';
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                resClass.innerText = 'Erreur de connexion au serveur';
+                resProb.innerText = '0%';
+                resBar.style.width = '0%';
+            });
+        }
+    </script>
+</body>
+</html>
