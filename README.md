@@ -80,5 +80,11 @@ Consultez la [documentation.md](documentation.md) pour obtenir les détails comp
 
 ## 📝 Références & Dataset
 - **Jeu de données** : [Kaggle GTSRB German Traffic Sign Dataset](https://www.kaggle.com/meowmeowmeowmeowmeow/gtsrb-german-traffic-sign)
+---
 
+## 👤 Auteur
+
+**Aya Ahdi**  
+
+* GitHub : [@Aya-Ahdi](https://github.com/Aya-Ahdi)
 
