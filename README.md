@@ -7,31 +7,19 @@
 
 Une application interactive de Deep Learning pour détecter et classifier les panneaux de signalisation routière en temps réel. Construite avec des réseaux de neurones convolutifs (CNN) sous TensorFlow/Keras et déployée via une interface web Flask moderne et réactive.
 
+
+
+
+
+
 ---
 
-## 🚀 Fonctionnalités
+## 🚀 Fonctionnalités Principales
 
 - **Détection en Temps Réel** : Analyse le flux vidéo de votre webcam en direct, entoure automatiquement les panneaux détectés et les classifie.
 - **Analyseur d'Images** : Une superbe interface web par glisser-déposer (Drag & Drop) permettant de téléverser des images de panneaux et d'obtenir des prédictions instantanées avec barres de confiance.
 - **Modèle de Haute Précision** : Entraîné sur le jeu de données allemand GTSRB (German Traffic Sign Recognition Benchmark) couvrant 43 classes.
 - **Conversion TFLite** : Pipeline de conversion pour exporter le modèle au format TensorFlow Lite afin de l'intégrer sur des appareils embarqués ou mobiles.
-
----
-
-## 📁 Structure du Projet
-
-```text
-├── templates/
-│   └── index.html             # Interface Web moderne en mode sombre (Glassmorphism)
-├── app.py                     # Serveur Flask et logique de traitement backend
-├── Live_Video_testing.py      # Script autonome OpenCV pour la détection webcam native
-├── run_training.py            # Pipeline d'entraînement et de conversion local
-├── training.ipynb             # Notebook Jupyter pour l'entraînement pas à pas (Colab/Local)
-├── traffif_sign_model.h5      # Poids du modèle CNN pré-entraîné
-├── documentation.md           # Guide de réplication technique étape par étape (FR)
-├── guide.md                   # Manuel d'installation et d'exécution (FR)
-└── README.md                  # Présentation du projet (Prêt pour votre GitHub public)
-```
 
 ---
 
@@ -67,6 +55,23 @@ Le modèle CNN traite des images converties en niveaux de gris et normalisées :
 4. **Couche Dense** (500 unités) + Dropout + Sortie Softmax (43 classes).
 
 Consultez la [documentation.md](documentation.md) pour obtenir les détails complets de réplication et d'entraînement.
+
+---
+
+## 📁 Structure du Projet
+
+```text
+├── templates/
+│   └── index.html             # Interface Web moderne en mode sombre (Glassmorphism)
+├── app.py                     # Serveur Flask et logique de traitement backend
+├── Live_Video_testing.py      # Script autonome OpenCV pour la détection webcam native
+├── run_training.py            # Pipeline d'entraînement et de conversion local
+├── training.ipynb             # Notebook Jupyter pour l'entraînement pas à pas (Colab/Local)
+├── traffif_sign_model.h5      # Poids du modèle CNN pré-entraîné
+├── documentation.md           # Guide de réplication technique étape par étape (FR)
+├── guide.md                   # Manuel d'installation et d'exécution (FR)
+└── README.md                  # Présentation du projet (Prêt pour votre GitHub public)
+```
 
 ---
 
