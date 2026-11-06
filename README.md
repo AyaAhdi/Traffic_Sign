@@ -7,10 +7,13 @@
 
 Une application interactive de Deep Learning pour détecter et classifier les panneaux de signalisation routière en temps réel. Construite avec des réseaux de neurones convolutifs (CNN) sous TensorFlow/Keras et déployée via une interface web Flask moderne et réactive.
 
+---
 
+## 📸 Aperçu de l'Application
 
-
-
+| Interface Web & Détection Webcam en Temps Réel |
+| :---: |
+| ![TrafficSign AI Execution](docs/images/TrafficSign_Execution.png) |
 
 ---
 
